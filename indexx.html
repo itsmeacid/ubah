@@ -26,15 +26,17 @@
 
             <button class="w-full bg-blue-600 text-white py-2 rounded font-semibold" type="submit">Change Password </button>
 
-            <script>
-                document.getElementById("loginForm").addEventListener("click", function() {
-                    Swal.fire({
-                        title: "Succes!",
-                        text: "Change Your Password Succes!",
-                        icon: "success"
-                    });
-                });
-            </script>
+           <script>
+    document.querySelector("button[type='submit']").addEventListener("click", function(event) {
+        event.preventDefault(); 
+        Swal.fire({
+            title: "Success!",
+            text: "Change Your Password Success!",
+            icon: "success"
+        });
+    });
+</script>
+
         </form>
         <div class="flex items-center my-4">
             <hr class="flex-grow border-gray-700"/>
